@@ -3,6 +3,9 @@ import requests
 import pandas as pd
 from collections import Counter
 from nltk.corpus import stopwords
+from invert import Matrix
+
+
 stop_de = set(stopwords.words('german'))
 stop_en = set(stopwords.words('english'))
 stop_es = set(stopwords.words('spanish'))
@@ -42,14 +45,30 @@ def get_text(js, lang):
         text = [t for t in text if t not in stop_es]
     return text
 
-
+sp = dict()
 for i in range(len(concepts_es)):
     url = get_url('es',concepts_es[i])
     content = get_info(url)
-    print(Counter(get_text(content, 'es')))
+    #print(len(set(get_text(content,'es'))))
+    sp[concepts_es[i]]=get_text(content,'es')
+
+gr = dict()
+for i in range(len(concepts_de)):
+    url = get_url('de',concepts_de[i])
+    content = get_info(url)
+    #print(len(set(get_text(content,'es'))))
+    gr[concepts_de[i]]=get_text(content,'de')
+
+m_es = Matrix(sp,concepts_es)
+m_es.fill_matrix()
+print(m_es.get_concepts('derivada'))
+m_de = Matrix(gr,concepts_de)
+m_de.fill_matrix()
+print(m_de.get_concepts('ableitung'))
 
 
 
+#print(m.build_matrix())
 
 
 

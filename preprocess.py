@@ -4,7 +4,7 @@ import pandas as pd
 from collections import Counter
 from nltk.corpus import stopwords
 from invert import Matrix
-
+from scipy.spatial.distance import cosine
 
 stop_de = set(stopwords.words('german'))
 stop_en = set(stopwords.words('english'))
@@ -58,17 +58,31 @@ for i in range(len(concepts_de)):
     content = get_info(url)
     #print(len(set(get_text(content,'es'))))
     gr[concepts_de[i]]=get_text(content,'de')
-
+#print(Counter(gr['Taylor-Formel'])['taylorreihe'])
 m_es = Matrix(sp,concepts_es)
 m_es.fill_matrix()
-print(m_es.get_concepts('derivada'))
+
+#result1= (m_es.get_concepts('constante'))
+#print(result1)
 m_de = Matrix(gr,concepts_de)
 m_de.fill_matrix()
-print(m_de.get_concepts('ableitung'))
 
-
+#result2 = (m_de.get_concepts('stetig'))
+#print(result2)
+#mutual = len(set(result1.keys()&set(result2.keys())))
+#all = (len(result1)+len(result2))-mutual
+#print(all)
+#print(mutual)
+#print(mutual/all)
 
 #print(m.build_matrix())
+
+# i1 = list(m_es.voc).index('función')
+#
+# i2 = list(m_de.voc).index('funktion')
+# print(m_es.matrix[i1,:])
+# print(m_de.matrix[i2,:])
+# print(cosine(m_es.matrix[i1,:], m_de.matrix[i2,:]))
 
 
 

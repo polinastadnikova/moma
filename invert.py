@@ -5,6 +5,8 @@ import scipy
 import numpy as np
 from nltk import probability
 from math import log
+from scipy.spatial.distance import cosine
+from math import pow
 
 class Matrix:
     def __init__(self, data, concepts):
@@ -42,5 +44,6 @@ class Matrix:
         w_i = list(self.voc).index(w)
         for i in range(len(self.concepts)):
             if self.matrix[w_i,i] != 0.0:
-                all[self.concepts[i]]=self.matrix[w_i,i]
-        return sorted(all.items(),key=lambda x:x[1], reverse=True)
+                all[i]=self.matrix[w_i,i]
+        return all
+        #return sorted(all.items(),key=lambda x:x[1], reverse=True)

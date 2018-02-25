@@ -47,3 +47,10 @@ class Matrix:
                 all[i]=self.matrix[w_i,i]
         return all
         #return sorted(all.items(),key=lambda x:x[1], reverse=True)
+
+    def get_words(self,c):
+        all = dict()
+        #print(np.nonzero(self.matrix[:, c]))
+        for index in np.nditer(np.nonzero(self.matrix[:,c])):
+            all[(list(self.voc)[index])]=self.matrix[index,c]
+        return sorted(all.items(),key=lambda x:x[1], reverse=True)[:30]

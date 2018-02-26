@@ -68,18 +68,24 @@ class Embeddings:
 
     def train(self):
         self.de_data = Matrix(self.build_corpus(self.concepts_de,'de'),self.concepts_de)
+        #self.de_data.fill_counts()
+        self.de_data.smooth(0.8)
         self.de_data.fill_matrix()
 
         self.en_data = Matrix(self.build_corpus(self.concepts_en,'en'),self.concepts_en)
+        #self.en_data.fill_counts()
+        self.en_data.smooth(0.8)
         self.en_data.fill_matrix()
 
         self.es_data = Matrix(self.build_corpus(self.concepts_es,'es'),self.concepts_es)
+        #self.es_data.fill_counts()
+        self.es_data.smooth(0.8)
         self.es_data.fill_matrix()
 
 
 '''Experiment 1'''
 def compare_concepts(concepts_de, concepts_en, concepts_es, de_data, en_data, es_data):
-    result1 = open('experiment1.csv','w', encoding='utf-8')
+    result1 = open('experiment1smooth.csv','w', encoding='utf-8')
     for n in range(len(concepts_de)):
         result1.write(concepts_de[n]+'\t'+concepts_en[n]+'\t'+concepts_es[n]+'\n')
         result1.write('\n')
@@ -97,11 +103,20 @@ def compare_concepts(concepts_de, concepts_en, concepts_es, de_data, en_data, es
 
 '''Experiment 2'''
 
-#for two words of the same language
+#for words of one language
 def compare_same(word1, word2, data):
-    w1=list(data.voc).index(word1)
-    w2=list(data.voc).index(word2)
+    w1=data.voc.index(word1)
+    w2=data.voc.index(word2)
+    print(w1,w2)
+    print(data.matrix[w1,:], data.matrix[w2,:])
     return cosine(data.matrix[w1,:], data.matrix[w2,:])
+
+'''Experiment 3'''
+#for words of two different languages
+def compare_diff(word1, word2, data1, data2):
+    w1=data1.voc.index(word1)
+    w2=data2.voc.index(word2)
+    return cosine(data1.matrix[w1,:], data2.matrix[w2,:])
 
 if __name__ == '__main__':
     print ('Loading embeddings...')
@@ -126,8 +141,33 @@ if __name__ == '__main__':
                 print(compare_same(word1, word2,emb.de_data))
             else:
                 print(compare_same(word1, word2, emb.es_data))
-            next = input('Do you want to proceed with this experiment? ')
-            if next == 'yes':
+            nxt = input('Do you want to proceed with this experiment? ')
+            if nxt == 'yes':
+                continue
+            else:
+                proceed = False
+    elif exp_number == '3':
+        print('Comparing two words of different languages...')
+        proceed = True
+        while proceed:
+            lang1 = input('Give the first language (en, de, es): ')
+            word1 = input('Give the first word: ')
+            lang2 = input('Give the second language (en, de, es): ')
+            word2 = input('Give the second word: ')
+            if lang1 == 'en' and lang2 == 'de':
+                print(compare_diff(word1, word2, emb.en_data, emb.de_data))
+            elif lang1 == 'en' and lang2 == 'es':
+                print(compare_diff(word1, word2, emb.en_data, emb.es_data))
+            elif lang1 == 'es' and lang2 == 'de':
+                print(compare_diff(word1, word2, emb.es_data, emb.de_data))
+            elif lang1 == 'de' and lang2 == 'en':
+                print(compare_diff(word1, word2, emb.de_data, emb.en_data))
+            elif lang1 == 'de' and lang2 == 'es':
+                print(compare_diff(word1, word2, emb.de_data, emb.es_data))
+            elif lang1 == 'es' and lang2 == 'en':
+                print(compare_diff(word1, word2, emb.es_data, emb.en_data))
+            nxt = input('Do you want to proceed with this experiment? ')
+            if nxt == 'yes':
                 continue
             else:
                 proceed = False

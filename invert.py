@@ -78,12 +78,13 @@ class Matrix:
         for i in range(len(self.concepts)):
             if self.matrix[w_i,i] != 0.0:
                 all[i]=self.matrix[w_i,i]
-        return all
-        #return sorted(all.items(),key=lambda x:x[1], reverse=True)
+        #return all
+        #print(sorted(all.items(),key=lambda x:x[1], reverse=True))
+        return sorted(all.items(),key=lambda x:x[1], reverse=True)
 
     def get_words(self,c):
         all = dict()
         #print(np.nonzero(self.matrix[:, c]))
         for index in np.nditer(np.nonzero(self.matrix[:,c])):
             all[(list(self.voc)[index])]=self.matrix[index,c]
-        return sorted(all.items(),key=lambda x:x[1], reverse=True)[:25]
+        return sorted(all.items(),key=lambda x:x[1], reverse=True)[:35]

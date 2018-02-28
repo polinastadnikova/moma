@@ -16,7 +16,7 @@ import treetaggerwrapper
 #stemmer_de = GermanStemmer()
 
 class Embeddings:
-    def __init__(self, smooth):
+    def __init__(self, smooth, filter):
         # extract mutual concepts
         titles = pd.read_csv('data/mutual.csv', encoding='latin')
         self.concepts_de = titles['de'].values
@@ -26,6 +26,7 @@ class Embeddings:
         self.en_data = None
         self.es_data = None
         self.smooth = smooth
+        self.filter = filter
 
     def get_url(self, lang, concept):
         return 'https://'+lang+'.wikipedia.org/w/api.php?action=query&prop=extracts&rvprop=content&format=json&titles='+concept
@@ -54,18 +55,21 @@ class Embeddings:
         if lang == 'de':
             #text = [stemmer_de.stem(t) for t in text if t not in stop_de]
             text = [t for t in text if t not in stop_de]
-            tags= tagger_de.tag_text(text)
-            text = [tag[0] for tag in treetaggerwrapper.make_tags(tags) if tag[1] == 'NN' or tag[1] == 'NE' or tag[1] == 'ADJA']
+            if self.filter:
+                tags = tagger_de.tag_text(text)
+                text = [tag[0] for tag in treetaggerwrapper.make_tags(tags) if tag[1] == 'NN' or tag[1] == 'NE' or tag[1] == 'ADJA']
         elif lang == 'en':
             #text = [stemmer_en.stem(t) for t in text if t not in stop_en]
             text = [t for t in text if t not in stop_en]
-            tags = tagger_en.tag_text(text)
-            text = [tag[0] for tag in treetaggerwrapper.make_tags(tags) if tag[1] == 'NN' or tag[1] == 'NP' or tag[1] == 'NNS' or tag[1] == 'NPS' or tag[1] == 'JJ']
+            if self.filter:
+                tags = tagger_en.tag_text(text)
+                text = [tag[0] for tag in treetaggerwrapper.make_tags(tags) if tag[1] == 'NN' or tag[1] == 'NP' or tag[1] == 'NNS' or tag[1] == 'NPS' or tag[1] == 'JJ']
         else:
             #text = [stemmer_es.stem(t) for t in text if t not in stop_es]
             text = [t for t in text if t not in stop_es]
-            tags= tagger_es.tag_text(text)
-            text = [tag[0] for tag in treetaggerwrapper.make_tags(tags) if tag[1] == 'NC' or tag[1] == 'NMEA' or tag[1] == 'NP' or tag[1] == 'ADJ' or 'VL' in tag[1]]
+            if self.filter:
+                tags= tagger_es.tag_text(text)
+                text = [tag[0] for tag in treetaggerwrapper.make_tags(tags) if tag[1] == 'NC' or tag[1] == 'NMEA' or tag[1] == 'NP' or tag[1] == 'ADJ' or 'VL' in tag[1]]
 
         return text
 
@@ -116,6 +120,7 @@ def compare_concepts(concepts_de, concepts_en, concepts_es, de_data, en_data, es
             result1.write(words_de[k]+'\t'+words_en[k]+'\t'+words_es[k]+'\n')
         result1.write('\n')
         result1.write('\n')
+
     #fields = [concepts_de[n], concepts_en[n],concepts_es[n]]
     #writer = csv.DictWriter(result1, fieldnames=fields)
     #writer.writeheader()
@@ -136,14 +141,28 @@ def compare_diff(word1, word2, data1, data2):
     w2=data2.voc.index(word2)
     return (cosine(data1.matrix[w1,:], data2.matrix[w2,:]),euclidean(data1.matrix[w1,:], data2.matrix[w2,:]))
 
+def mutual_concepts(word1,word2, data1, data2):
+    r1 = [w[0] for w in data1.get_concepts(word1)]
+    r2 = [w[0] for w in data2.get_concepts(word2)]
+    mutual = list(set(r1).intersection(r2))
+    return [data1.concepts[n]+' / '+data2.concepts[n] for n in mutual]
+
 if __name__ == '__main__':
     #decide whether to do smoothing or not
     smooth = input('Do you want to use a smoothing technique?(y/n) ')
-    print ('Loading embeddings...')
-    if smooth == 'y':
-        emb=Embeddings(True)
+    filter = input('Do you want to filter out some POS?(y/n) ')
+    if smooth == 'y' and filter == 'y':
+        print('Loading embeddings with smoothing and filtering...')
+        emb=Embeddings(True, True)
+    elif smooth == 'y' and filter != 'y':
+        print('Loading embeddings with smoothing and no filtering...')
+        emb=Embeddings(True,False)
+    elif smooth != 'y' and filter == 'y':
+        print('Loading embeddings with no smoothing and filtering...')
+        emb = Embeddings(False, True)
     else:
-        emb=Embeddings(False)
+        print('Loading embeddings with no smoothing and no filtering...')
+        emb = Embeddings(False, False)
     emb.train()
     proceed = True
     while proceed:
@@ -194,21 +213,27 @@ if __name__ == '__main__':
                 if lang1 == 'en' and lang2 == 'de':
                     result = compare_diff(word1, word2, emb.en_data, emb.de_data)
                     print('Cosine similarity: ' + str(result[0]) + ' Euclidean distance: ' + str(result[1]))
+                    print('Mutual concepts: ' + str(mutual_concepts(word1,word2,emb.en_data, emb.de_data)))
                 elif lang1 == 'en' and lang2 == 'es':
                     result=compare_diff(word1, word2, emb.en_data, emb.es_data)
                     print('Cosine similarity: ' + str(result[0]) + ' Euclidean distance: ' + str(result[1]))
+                    print('Mutual concepts: ' + str(mutual_concepts(word1, word2, emb.en_data, emb.es_data)))
                 elif lang1 == 'es' and lang2 == 'de':
                     result=compare_diff(word1, word2, emb.es_data, emb.de_data)
                     print('Cosine similarity: ' + str(result[0]) + ' Euclidean distance: ' + str(result[1]))
+                    print('Mutual concepts: ' + str(mutual_concepts(word1, word2, emb.es_data, emb.de_data)))
                 elif lang1 == 'de' and lang2 == 'en':
                     result=compare_diff(word1, word2, emb.de_data, emb.en_data)
                     print('Cosine similarity: ' + str(result[0]) + ' Euclidean distance: ' + str(result[1]))
+                    print('Mutual concepts: ' + str(mutual_concepts(word1, word2, emb.de_data, emb.en_data)))
                 elif lang1 == 'de' and lang2 == 'es':
                     result=compare_diff(word1, word2, emb.de_data, emb.es_data)
                     print('Cosine similarity: ' + str(result[0]) + ' Euclidean distance: ' + str(result[1]))
+                    print('Mutual concepts: ' + str(mutual_concepts(word1, word2, emb.de_data, emb.es_data)))
                 elif lang1 == 'es' and lang2 == 'en':
                     result = compare_diff(word1, word2, emb.es_data, emb.en_data)
                     print('Cosine similarity: ' + str(result[0]) + ' Euclidean distance: ' + str(result[1]))
+                    print('Mutual concepts: ' + str(mutual_concepts(word1, word2, emb.es_data, emb.en_data)))
                 nxt = input('Do you want to proceed with this experiment?(y/n) ')
                 if nxt == 'y':
                     continue

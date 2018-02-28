@@ -1,0 +1,105 @@
+Loading embeddings...
+Which experiment do you choose? 2
+Comparing two words of the same language...
+Give the language (en, de, es): de
+Give the first word: funktion
+Give the second word: maximum
+0.689461642194
+Do you want to proceed with this experiment? yes
+Give the language (en, de, es): de
+Give the first word: funktion
+Give the second word: punkt
+0.250769951339
+Do you want to proceed with this experiment? yes
+Give the language (en, de, es): de
+Give the first word: funktion
+Give the second word: grenzwert
+0.345614703986
+Do you want to proceed with this experiment? yes
+Give the language (en, de, es): de
+Give the first word: funktion
+Give the second word: matrix
+0.839523877063
+Do you want to proceed with this experiment? yes
+Give the language (en, de, es): de
+Give the first word: funktion
+Give the second word: taylor
+0.727822567143
+Do you want to proceed with this experiment? yes
+Give the language (en, de, es): de
+Give the first word: funktion
+Give the second word: integral
+0.534485041705
+Do you want to proceed with this experiment? yes
+Give the language (en, de, es): de
+Give the first word: funktion
+Give the second word: häufungspunkt
+0.719294793259
+Do you want to proceed with this experiment? yes
+Give the language (en, de, es): de
+Give the first word: funktion
+Give the second word: extremwert
+0.759769959057
+
+
+
+/usr/bin/python3.5 /home/polina/Dokumente/MathAnalysis/moma/preprocess.py
+Do you want to use a smoothing technique?(y/n) y
+Do you want to filter out some POS?(y/n) n
+Loading embeddings with smoothing and no filtering...
+Which experiment do you choose?(1,2,3) 2
+Comparing two words of the same language...
+Give the language (en, de, es): en
+Give the first word: function
+Give the second word: limit
+0.30444878299
+Cosine similarity: 0.69555121701 Euclidean distance: 4.96989114515279
+Do you want to proceed with this experiment?(y/n) y
+Give the language (en, de, es): en
+Give the first word: function
+Give the second word: matrix
+0.0
+Cosine similarity: 1.0 Euclidean distance: 6.369446489835904
+Do you want to proceed with this experiment?(y/n) y
+Give the language (en, de, es): en
+Give the first word: function
+Give the second word: maximum
+0.441571665547
+Cosine similarity: 0.558428334453 Euclidean distance: 5.885378857197992
+Do you want to proceed with this experiment?(y/n) y
+Give the language (en, de, es): de
+Give the first word: funktion
+Give the second word: maximum
+0.00274042910695
+Cosine similarity: 0.997259570893 Euclidean distance: 6.131715227949761
+Do you want to proceed with this experiment?(y/n) y
+Give the language (en, de, es): de
+Give the first word: funktion
+Give the second word: extremum
+0.00297076423771
+Cosine similarity: 0.997029235762 Euclidean distance: 6.167762826553102
+Do you want to proceed with this experiment?(y/n) y
+Give the language (en, de, es): de
+Give the first word: matrix
+Give the second word: determinante
+0.831519444566
+Cosine similarity: 0.168480555434 Euclidean distance: 3.415105859561178
+Do you want to proceed with this experiment?(y/n) y
+Give the language (en, de, es): de
+Give the first word: matrix
+Give the second word: funktion
+0.0
+Cosine similarity: 1.0 Euclidean distance: 6.466564639180296
+Do you want to proceed with this experiment?(y/n) y
+Give the language (en, de, es): en
+Give the first word: matrix
+Give the second word: determinant
+0.720990642062
+Cosine similarity: 0.279009357938 Euclidean distance: 3.6123423158088155
+Do you want to proceed with this experiment?(y/n) y
+Give the language (en, de, es): en
+Give the first word: matrix
+Give the second word: function
+0.0
+Cosine similarity: 1.0 Euclidean distance: 6.369446489835904
+Do you want to proceed with this experiment?(y/n) 

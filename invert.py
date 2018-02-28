@@ -21,6 +21,7 @@ class Matrix:
         #ppmi matrix
         self.matrix = np.zeros((len(self.voc), len(self.concepts)), dtype=float)
 
+    #compute raw counts
     def fill_counts(self):
         for i in range(len(self.concepts)):
             c = self.concepts[i]
@@ -29,6 +30,7 @@ class Matrix:
                 if self.voc[w] in counts.keys():
                     self.occur_matrix[w,i]=counts[self.voc[w]]
 
+    #compute ppmi
     def fill_matrix(self):
         for i in range(len(self.concepts)):
             nonzero = np.nonzero(self.occur_matrix[:,i])
